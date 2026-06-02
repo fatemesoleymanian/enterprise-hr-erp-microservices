@@ -1,0 +1,250 @@
+openapi: 3.0.3
+
+info:
+title: Department Service API
+version: 0.1.0
+description: API contract for department management and manager assignment.
+
+servers:
+
+* url: http://localhost:8080
+  description: Local API Gateway
+
+tags:
+
+* name: Departments
+
+paths:
+/api/departments:
+post:
+tags:
+- Departments
+summary: Create a department
+operationId: createDepartment
+security:
+- bearerAuth: []
+requestBody:
+required: true
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/CreateDepartmentRequest'
+responses:
+'201':
+description: Department created
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/DepartmentResponse'
+'400':
+description: Invalid request
+'401':
+description: Missing or invalid authentication
+'409':
+description: Department name already exists
+
+```
+get:
+  tags:
+    - Departments
+  summary: List all departments
+  operationId: getDepartments
+  security:
+    - bearerAuth: []
+  responses:
+    '200':
+      description: Department list
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DepartmentResponse'
+```
+
+/api/departments/{id}:
+get:
+tags:
+- Departments
+summary: Get department by id
+operationId: getDepartment
+security:
+- bearerAuth: []
+parameters:
+- name: id
+in: path
+required: true
+schema:
+type: string
+format: uuid
+responses:
+'200':
+description: Department found
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/DepartmentResponse'
+'404':
+description: Department not found
+
+```
+put:
+  tags:
+    - Departments
+  summary: Update department
+  operationId: updateDepartment
+  security:
+    - bearerAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/UpdateDepartmentRequest'
+  responses:
+    '200':
+      description: Department updated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DepartmentResponse'
+    '404':
+      description: Department not found
+    '409':
+      description: Department name already exists
+```
+
+/api/departments/{id}/manager:
+patch:
+tags:
+- Departments
+summary: Assign department manager
+operationId: assignManager
+security:
+- bearerAuth: []
+parameters:
+- name: id
+in: path
+required: true
+schema:
+type: string
+format: uuid
+requestBody:
+required: true
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/AssignManagerRequest'
+responses:
+'200':
+description: Manager assigned
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/DepartmentResponse'
+'404':
+description: Department not found
+
+components:
+securitySchemes:
+bearerAuth:
+type: http
+scheme: bearer
+bearerFormat: JWT
+
+schemas:
+
+```
+CreateDepartmentRequest:
+  type: object
+  required:
+    - name
+  properties:
+    name:
+      type: string
+      maxLength: 255
+    description:
+      type: string
+    parentDepartmentId:
+      type: string
+      format: uuid
+      nullable: true
+
+UpdateDepartmentRequest:
+  type: object
+  required:
+    - name
+  properties:
+    name:
+      type: string
+      maxLength: 255
+    description:
+      type: string
+    parentDepartmentId:
+      type: string
+      format: uuid
+      nullable: true
+
+AssignManagerRequest:
+  type: object
+  required:
+    - managerUserId
+  properties:
+    managerUserId:
+      type: string
+      format: uuid
+
+DepartmentResponse:
+  type: object
+  required:
+    - id
+    - name
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+    description:
+      type: string
+      nullable: true
+    parentDepartmentId:
+      type: string
+      format: uuid
+      nullable: true
+    managerUserId:
+      type: string
+      format: uuid
+      nullable: true
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+ErrorResponse:
+  type: object
+  required:
+    - errorCode
+    - message
+    - path
+    - timestamp
+  properties:
+    errorCode:
+      type: string
+    message:
+      type: string
+    path:
+      type: string
+    timestamp:
+      type: string
+      format: date-time
+```
