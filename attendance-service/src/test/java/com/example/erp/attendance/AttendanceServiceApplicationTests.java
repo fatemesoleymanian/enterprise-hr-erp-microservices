@@ -1,10 +1,10 @@
-package com.example.erp.common_lib;
+package com.example.erp.attendance;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CommonLibApplicationTests {
+class AttendanceServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,13 +1,13 @@
-package com.example.erp.common_lib;
+package com.example.erp.attendance;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CommonLibApplication {
+public class AttendanceServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CommonLibApplication.class, args);
+		SpringApplication.run(AttendanceServiceApplication.class, args);
 	}
 
 }
