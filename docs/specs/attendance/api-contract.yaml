@@ -1,0 +1,303 @@
+openapi: 3.0.3
+info:
+  title: Attendance Service API
+  version: 0.1.0
+  description: API contract for check-in, check-out, attendance history, and monthly summaries.
+servers:
+  - url: http://localhost:8080
+    description: Local API Gateway
+tags:
+  - name: Attendance
+paths:
+  /api/attendance/check-in:
+    post:
+      tags:
+        - Attendance
+      summary: Check in an employee for a work date
+      operationId: checkIn
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckInRequest'
+      responses:
+        '201':
+          description: Employee checked in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecordResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid authentication
+        '409':
+          description: Employee already checked in for the date
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/attendance/check-out:
+    post:
+      tags:
+        - Attendance
+      summary: Check out an employee for a work date
+      operationId: checkOut
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckOutRequest'
+      responses:
+        '200':
+          description: Employee checked out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecordResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid authentication
+        '404':
+          description: Check-in record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Check-out already exists or check-out violates attendance rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/attendance/employees/{employeeId}:
+    get:
+      tags:
+        - Attendance
+      summary: List attendance records for an employee
+      operationId: getEmployeeAttendance
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Attendance records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceRecordResponse'
+        '401':
+          description: Missing or invalid authentication
+
+  /api/attendance/employees/{employeeId}/monthly-summary:
+    get:
+      tags:
+        - Attendance
+      summary: Get monthly attendance summary for an employee
+      operationId: getMonthlySummary
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 2000
+            maximum: 2100
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+      responses:
+        '200':
+          description: Monthly attendance summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlyAttendanceSummaryResponse'
+        '400':
+          description: Invalid year or month
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid authentication
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CheckInRequest:
+      type: object
+      required:
+        - employeeId
+        - checkInAt
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        checkInAt:
+          type: string
+          format: date-time
+          example: '2026-06-01T09:10:00Z'
+
+    CheckOutRequest:
+      type: object
+      required:
+        - employeeId
+        - checkOutAt
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        checkOutAt:
+          type: string
+          format: date-time
+          example: '2026-06-01T16:30:00Z'
+
+    AttendanceRecordResponse:
+      type: object
+      required:
+        - id
+        - employeeId
+        - attendanceDate
+        - statuses
+        - workedMinutes
+      properties:
+        id:
+          type: string
+          format: uuid
+        employeeId:
+          type: string
+          format: uuid
+        attendanceDate:
+          type: string
+          format: date
+        checkInAt:
+          type: string
+          format: date-time
+          nullable: true
+        checkOutAt:
+          type: string
+          format: date-time
+          nullable: true
+        statuses:
+          type: array
+          items:
+            type: string
+            enum:
+              - PRESENT
+              - LATE
+              - EARLY_LEAVE
+              - ABSENT
+        workedMinutes:
+          type: integer
+          minimum: 0
+
+    MonthlyAttendanceSummaryResponse:
+      type: object
+      required:
+        - employeeId
+        - year
+        - month
+        - presentDays
+        - lateDays
+        - earlyLeaveDays
+        - absentDays
+        - totalWorkedMinutes
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        year:
+          type: integer
+        month:
+          type: integer
+        presentDays:
+          type: integer
+          minimum: 0
+        lateDays:
+          type: integer
+          minimum: 0
+        earlyLeaveDays:
+          type: integer
+          minimum: 0
+        absentDays:
+          type: integer
+          minimum: 0
+        totalWorkedMinutes:
+          type: integer
+          minimum: 0
+
+    ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - message
+        - path
+        - timestamp
+      properties:
+        errorCode:
+          type: string
+          example: DUPLICATE_CHECK_IN
+        message:
+          type: string
+          example: Employee already checked in for this date.
+        path:
+          type: string
+          example: /api/attendance/check-in
+        timestamp:
+          type: string
+          format: date-time
