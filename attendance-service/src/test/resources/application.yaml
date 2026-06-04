@@ -10,6 +10,10 @@ spring:
     discovery:
       enabled: false
 
+attendance:
+  kafka:
+    topic: attendance.events
+
 eureka:
   client:
     enabled: false
