@@ -1,3 +1,41 @@
+server:
+  port: 8082
+
 spring:
   application:
     name: department-service
+
+  cloud:
+    config:
+      enabled : false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5434/department_db
+    username: department_user
+    password: department_pass
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      open-in-view: false
+
+  flyway:
+    enabled: true
+
+  logging:
+    level:
+      org.flywaydb : DEBUG
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
