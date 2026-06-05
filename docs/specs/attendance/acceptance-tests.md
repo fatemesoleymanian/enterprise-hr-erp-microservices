@@ -44,7 +44,7 @@ And `AttendanceCheckedOut` is published.
 
 Given an employee has no attendance record today  
 When the employee checks out  
-Then the API returns `404 Not Found`  
+Then the API returns `409 Conflict`
 And no `AttendanceCheckedOut` event is published.
 
 ## Early check-out creates violation

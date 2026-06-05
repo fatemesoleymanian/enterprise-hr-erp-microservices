@@ -1,7 +1,10 @@
 package com.example.erp.attendance.domain;
 
+import org.springframework.stereotype.Component;
+
 import java.time.LocalTime;
 
+@Component
 public class AttendancePolicyEvaluator {
 
     private static final LocalTime DEFAULT_LATE_AFTER = LocalTime.of(9, 15);
