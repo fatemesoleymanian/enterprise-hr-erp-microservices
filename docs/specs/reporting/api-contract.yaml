@@ -1,0 +1,367 @@
+openapi: 3.0.3
+info:
+  title: Reporting Service API
+  version: 0.1.0
+  description: API contract for event-fed HR ERP reporting views.
+servers:
+  - url: http://localhost:8080
+    description: Local API Gateway
+tags:
+  - name: Reports
+paths:
+  /api/reports/attendance/monthly:
+    get:
+      tags:
+        - Reports
+      summary: Get monthly attendance summaries
+      operationId: getMonthlyAttendanceReports
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 2000
+            maximum: 2100
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+        - name: employeeId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: departmentId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Monthly attendance report rows
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthlyAttendanceReportListApiResponse'
+        '400':
+          description: Invalid filter value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid authentication
+
+  /api/reports/departments/{departmentId}/attendance:
+    get:
+      tags:
+        - Reports
+      summary: Get attendance summaries for a department
+      operationId: getDepartmentAttendanceReport
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: departmentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 2000
+            maximum: 2100
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+      responses:
+        '200':
+          description: Department attendance report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartmentAttendanceReportApiResponse'
+        '400':
+          description: Invalid filter value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid authentication
+
+  /api/reports/employees/status-summary:
+    get:
+      tags:
+        - Reports
+      summary: Get employee status counts
+      operationId: getEmployeeStatusSummary
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: departmentId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Employee status summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeStatusSummaryApiResponse'
+        '401':
+          description: Missing or invalid authentication
+
+  /api/reports/departments/headcount:
+    get:
+      tags:
+        - Reports
+      summary: Get active employee headcount by department
+      operationId: getDepartmentHeadcount
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Department headcount rows
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartmentHeadcountListApiResponse'
+        '401':
+          description: Missing or invalid authentication
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ApiResponse:
+      type: object
+      required:
+        - data
+        - message
+        - timestamp
+      properties:
+        data:
+          nullable: true
+        message:
+          type: string
+          example: Success
+        timestamp:
+          type: string
+          format: date-time
+
+    MonthlyAttendanceReportListApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/MonthlyAttendanceReportRow'
+
+    DepartmentAttendanceReportApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/DepartmentAttendanceReport'
+
+    EmployeeStatusSummaryApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/EmployeeStatusSummary'
+
+    DepartmentHeadcountListApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/DepartmentHeadcountRow'
+
+    MonthlyAttendanceReportRow:
+      type: object
+      required:
+        - employeeId
+        - year
+        - month
+        - presentDays
+        - lateDays
+        - earlyLeaveDays
+        - absentDays
+        - totalWorkedMinutes
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        departmentId:
+          type: string
+          format: uuid
+          nullable: true
+        year:
+          type: integer
+        month:
+          type: integer
+        presentDays:
+          type: integer
+          minimum: 0
+        lateDays:
+          type: integer
+          minimum: 0
+        earlyLeaveDays:
+          type: integer
+          minimum: 0
+        absentDays:
+          type: integer
+          minimum: 0
+        totalWorkedMinutes:
+          type: integer
+          minimum: 0
+
+    DepartmentAttendanceReport:
+      type: object
+      required:
+        - departmentId
+        - year
+        - month
+        - employees
+        - totals
+      properties:
+        departmentId:
+          type: string
+          format: uuid
+        year:
+          type: integer
+        month:
+          type: integer
+        employees:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthlyAttendanceReportRow'
+        totals:
+          $ref: '#/components/schemas/AttendanceTotals'
+
+    AttendanceTotals:
+      type: object
+      required:
+        - presentDays
+        - lateDays
+        - earlyLeaveDays
+        - absentDays
+        - totalWorkedMinutes
+      properties:
+        presentDays:
+          type: integer
+          minimum: 0
+        lateDays:
+          type: integer
+          minimum: 0
+        earlyLeaveDays:
+          type: integer
+          minimum: 0
+        absentDays:
+          type: integer
+          minimum: 0
+        totalWorkedMinutes:
+          type: integer
+          minimum: 0
+
+    EmployeeStatusSummary:
+      type: object
+      required:
+        - totalEmployees
+        - activeEmployees
+        - inactiveEmployees
+        - statusCounts
+      properties:
+        departmentId:
+          type: string
+          format: uuid
+          nullable: true
+        totalEmployees:
+          type: integer
+          minimum: 0
+        activeEmployees:
+          type: integer
+          minimum: 0
+        inactiveEmployees:
+          type: integer
+          minimum: 0
+        statusCounts:
+          type: object
+          additionalProperties:
+            type: integer
+            minimum: 0
+          example:
+            ACTIVE: 42
+            INACTIVE: 3
+
+    DepartmentHeadcountRow:
+      type: object
+      required:
+        - departmentId
+        - departmentName
+        - activeEmployees
+      properties:
+        departmentId:
+          type: string
+          format: uuid
+        departmentName:
+          type: string
+        managerUserId:
+          type: string
+          format: uuid
+          nullable: true
+        activeEmployees:
+          type: integer
+          minimum: 0
+
+    ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - message
+        - path
+        - timestamp
+      properties:
+        errorCode:
+          type: string
+          example: INVALID_REPORT_FILTER
+        message:
+          type: string
+          example: Invalid reporting filter.
+        path:
+          type: string
+          example: /api/reports/attendance/monthly
+        timestamp:
+          type: string
+          format: date-time
