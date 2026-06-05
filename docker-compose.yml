@@ -53,8 +53,8 @@ services:
     ports:
       - "5438:5432"
 
-  kafka:
-    image: bitnami/kafka:3.7
+  Kafka:
+    image: apache/kafka:4.2.1
     ports:
       - "9092:9092"
     environment:
