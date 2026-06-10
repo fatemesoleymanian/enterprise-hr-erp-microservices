@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Comparator;
@@ -64,7 +65,7 @@ public class JwtService {
     private String sign(String unsignedToken) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(new SecretKeySpec(jwtProperties.secret().getBytes(StandardCharsets.UTF_8), HMAC_ALGORITHM));
+            mac.init(new SecretKeySpec(deriveKey(jwtProperties.secret()), HMAC_ALGORITHM));
             byte[] signature = mac.doFinal(unsignedToken.getBytes(StandardCharsets.UTF_8));
             return Base64.getUrlEncoder().withoutPadding().encodeToString(signature);
         } catch (Exception exception) {
@@ -81,6 +82,14 @@ public class JwtService {
             return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException exception) {
             throw new IllegalStateException("Unable to serialize JWT claims.", exception);
+        }
+    }
+
+    private byte[] deriveKey(String secret) {
+        try {
+            return MessageDigest.getInstance("SHA-256").digest(secret.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception exception) {
+            throw new IllegalStateException("Unable to derive JWT signing key.", exception);
         }
     }
 }
