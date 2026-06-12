@@ -7,12 +7,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "departments")
-public class Department
+public class DepartmentRecord
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(name = "name",length = 255, nullable = false, unique = true)
+    @Column(name = "name",length = 255, nullable = false)
     private String name;
     @Column(name = "description",nullable = true)
     private String description;
@@ -28,9 +27,9 @@ public class Department
     @Column(name = "version", nullable = false)
     private Long version;
 
-    public Department(UUID id, String name, String description, UUID parentDepartmentId,
-                      UUID managerUserId, OffsetDateTime createdAt, OffsetDateTime updatedAt,
-                      Long version) {
+    public DepartmentRecord(UUID id, String name, String description, UUID parentDepartmentId,
+                            UUID managerUserId, OffsetDateTime createdAt, OffsetDateTime updatedAt,
+                            Long version) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -41,7 +40,7 @@ public class Department
         this.version = version;
     }
 
-    public Department() {
+    public DepartmentRecord() {
     }
 
     public UUID getId() {
