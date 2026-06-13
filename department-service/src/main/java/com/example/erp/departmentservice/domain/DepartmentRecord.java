@@ -10,9 +10,8 @@ import java.util.UUID;
 public class DepartmentRecord
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(name = "name",length = 255, nullable = false, unique = true)
+    @Column(name = "name",length = 255, nullable = false)
     private String name;
     @Column(name = "description",nullable = true)
     private String description;
