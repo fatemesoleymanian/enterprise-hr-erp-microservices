@@ -13,4 +13,6 @@ public interface EmployeeReportViewRepository extends JpaRepository<EmployeeRepo
     long countByDepartmentIdAndStatus(UUID departmentId, String status);
 
     long countByStatus(String status);
+
+    List<EmployeeReportView> findByStatus(String status);
 }
