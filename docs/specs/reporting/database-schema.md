@@ -46,6 +46,32 @@ Stores monthly attendance aggregates per employee. Rows are updated from attenda
 | `total_worked_minutes` | INTEGER | Not null | Total worked minutes for the month |
 | `updated_at` | TIMESTAMP WITH TIME ZONE | Not null | Last projection update timestamp |
 
+### processed_reporting_events
+
+Stores consumed event IDs so redelivered Kafka events do not update projections twice.
+
+| Column | Type | Constraints | Description |
+| --- | --- | --- | --- |
+| `event_id` | UUID | Primary key | Stable event envelope identifier |
+| `event_type` | VARCHAR(100) | Not null | Consumed event type |
+| `processed_at` | TIMESTAMP WITH TIME ZONE | Not null | Time the event was applied |
+
+### attendance_report_contributions
+
+Stores the current contribution of each attendance record to its monthly aggregate. This allows check-in, check-out, and violation events for the same record to update totals without double-counting.
+
+| Column | Type | Constraints | Description |
+| --- | --- | --- | --- |
+| `attendance_record_id` | UUID | Primary key | Attendance record identifier from the event payload |
+| `employee_id` | UUID | Not null | Employee identifier from the event payload |
+| `attendance_date` | DATE | Not null | Date used to select the monthly aggregate |
+| `present` | BOOLEAN | Not null | Whether the record contributes one present day |
+| `late` | BOOLEAN | Not null | Whether the record contributes one late day |
+| `early_leave` | BOOLEAN | Not null | Whether the record contributes one early-leave day |
+| `absent` | BOOLEAN | Not null | Whether the record contributes one absent day |
+| `worked_minutes` | INTEGER | Not null | Worked minutes contributed by the record |
+| `updated_at` | TIMESTAMP WITH TIME ZONE | Not null | Last event time applied to the contribution |
+
 ## Constraints
 
 ```sql
@@ -62,6 +88,7 @@ CREATE INDEX idx_employee_report_status ON employee_report_views(status);
 CREATE INDEX idx_department_report_manager ON department_report_views(manager_user_id);
 CREATE INDEX idx_attendance_monthly_employee ON attendance_monthly_report_views(employee_id);
 CREATE INDEX idx_attendance_monthly_year_month ON attendance_monthly_report_views(report_year, report_month);
+CREATE INDEX idx_attendance_contribution_employee_date ON attendance_report_contributions(employee_id, attendance_date);
 ```
 
 ## Initial Migration
@@ -102,3 +129,7 @@ CREATE INDEX idx_department_report_manager ON department_report_views(manager_us
 CREATE INDEX idx_attendance_monthly_employee ON attendance_monthly_report_views(employee_id);
 CREATE INDEX idx_attendance_monthly_year_month ON attendance_monthly_report_views(report_year, report_month);
 ```
+
+## Idempotency Migration
+
+`V2__add_reporting_event_idempotency.sql` creates `processed_reporting_events` and `attendance_report_contributions` after the initial projection tables.

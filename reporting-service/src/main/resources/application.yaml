@@ -16,6 +16,18 @@ spring:
     enabled: true
   kafka:
     bootstrap-servers: localhost:9092
+    consumer:
+      group-id: reporting-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+reporting:
+  kafka:
+    topics:
+      department: department.events
+      employee: employee.events
+      attendance: attendance.events
 
 eureka:
   client:
