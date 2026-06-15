@@ -16,4 +16,10 @@ public interface AttendanceMonthlyReportViewRepository extends JpaRepository<Att
     );
 
     List<AttendanceMonthlyReportView> findByReportYearAndReportMonth(int reportYear, int reportMonth);
+
+    List<AttendanceMonthlyReportView> findByEmployeeIdInAndReportYearAndReportMonth(
+            List<UUID> employeeIds,
+            int reportYear,
+            int reportMonth
+    );
 }
