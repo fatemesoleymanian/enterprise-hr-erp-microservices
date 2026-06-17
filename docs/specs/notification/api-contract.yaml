@@ -1,0 +1,196 @@
+openapi: 3.0.3
+info:
+  title: Notification Service API
+  version: 0.1.0
+  description: API contract for event-created ERP notifications.
+servers:
+  - url: http://localhost:8080
+    description: Local API Gateway
+tags:
+  - name: Notifications
+paths:
+  /api/notifications:
+    get:
+      tags:
+        - Notifications
+      summary: List notifications
+      operationId: listNotifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recipientRole
+          in: query
+          required: false
+          schema:
+            type: string
+            example: HR
+        - name: recipientUserId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: read
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/NotificationType'
+      responses:
+        '200':
+          description: Notification rows
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationListApiResponse'
+        '400':
+          description: Invalid filter value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid authentication
+
+  /api/notifications/{id}/read:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark a notification as read
+      operationId: markNotificationRead
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationApiResponse'
+        '401':
+          description: Missing or invalid authentication
+        '404':
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ApiResponse:
+      type: object
+      required:
+        - data
+        - message
+        - timestamp
+      properties:
+        data:
+          nullable: true
+        message:
+          type: string
+          example: Success
+        timestamp:
+          type: string
+          format: date-time
+
+    NotificationListApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/NotificationResponse'
+
+    NotificationApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/NotificationResponse'
+
+    NotificationResponse:
+      type: object
+      required:
+        - id
+        - recipientRole
+        - type
+        - title
+        - body
+        - read
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipientRole:
+          type: string
+          example: HR
+        recipientUserId:
+          type: string
+          format: uuid
+          nullable: true
+        type:
+          $ref: '#/components/schemas/NotificationType'
+        title:
+          type: string
+          example: Attendance violation detected
+        body:
+          type: string
+          example: Employee 17f27b9b-bd8d-468a-9140-2f3c5d35a8b1 was marked LATE.
+        read:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        readAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    NotificationType:
+      type: string
+      enum:
+        - ATTENDANCE_VIOLATION
+        - EMPLOYEE_STATUS_CHANGED
+
+    ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - message
+        - path
+        - timestamp
+      properties:
+        errorCode:
+          type: string
+          example: NOTIFICATION_NOT_FOUND
+        message:
+          type: string
+          example: Notification not found.
+        path:
+          type: string
+          example: /api/notifications/f3ab8c5d-b8f8-4b19-9e35-4d83c57b02a2/read
+        timestamp:
+          type: string
+          format: date-time
