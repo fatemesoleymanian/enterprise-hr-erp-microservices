@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "Employees")
-public class employee
+public class Employee
 {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,13 +34,15 @@ public class employee
     private OffsetDateTime updated_at;
     @Column(name = "version", nullable = false)
     private Integer version;
+    @Column(name = "status", nullable = false)
+    private Status status;
 
-    public employee(UUID id, UUID user_id, String first_name,
+    public Employee(UUID id, UUID user_id, String first_name,
                     String employee_number, String last_name,
                     String email, UUID department_id,
                     UUID manager_employee_id, OffsetDateTime hire_date,
                     OffsetDateTime created_at, OffsetDateTime updated_at,
-                    Integer version) {
+                    Integer version, Status status) {
         this.id = id;
         this.user_id = user_id;
         this.first_name = first_name;
@@ -53,9 +55,10 @@ public class employee
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.version = version;
+        this.status = status;
     }
 
-    public employee() {
+    public Employee() {
     }
 
     public UUID getId() {
@@ -152,5 +155,13 @@ public class employee
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
