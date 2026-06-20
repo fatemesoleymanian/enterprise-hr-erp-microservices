@@ -75,6 +75,7 @@ Notification mapping:
 
 - Consumers must be idempotent because Kafka events may be delivered more than once.
 - Consumers must use `eventId` or a stable payload identifier to avoid duplicate notifications.
+- Processed event IDs are stored in `processed_notification_events`.
 - Notification creation must not call other services during event processing.
 - If event payloads contain only IDs, the notification body stores those IDs instead of querying another service.
 - Failed event processing may be retried by Kafka consumer retry behavior.

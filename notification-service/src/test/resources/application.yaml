@@ -10,7 +10,16 @@ spring:
   cloud:
     discovery:
       enabled: false
+  kafka:
+    listener:
+      auto-startup: false
 
 eureka:
   client:
     enabled: false
+
+notification:
+  kafka:
+    topics:
+      attendance: attendance.events
+      employee: employee.events
