@@ -32,16 +32,16 @@ public class CreateEmployeeMapper
         dto.setCreated_at(entity.getCreated_at());
         dto.setUpdated_at(entity.getUpdated_at());
         dto.setId(entity.getId());
-        dto.setEmail(dto.getEmail());
+        dto.setEmail(entity.getEmail());
         dto.setStatus_name(entity.getStatus());
-        dto.setFirst_name(dto.getFirst_name());
-        dto.setLast_name(dto.getLast_name());
-        dto.setEmployee_number(dto.getEmployee_number());
-        dto.setDepartment_id(dto.getDepartment_id());
-        dto.setHire_date(dto.getHire_date());
-        dto.setUser_id(dto.getUser_id());
+        dto.setFirst_name(entity.getFirst_name());
+        dto.setLast_name(entity.getLast_name());
+        dto.setEmployee_number(entity.getEmployee_number());
+        dto.setDepartment_id(entity.getDepartment_id());
+        dto.setHire_date(entity.getHire_date());
+        dto.setUser_id(entity.getUser_id());
         dto.setManager_employee_id(entity.getManager_employee_id());
-        dto.setVersion(dto.getVersion());
+        dto.setVersion(entity.getVersion());
         return dto;
     }
 
