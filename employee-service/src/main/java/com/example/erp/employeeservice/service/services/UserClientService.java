@@ -1,0 +1,30 @@
+package com.example.erp.employeeservice.service.services;
+
+import com.example.erp.employeeservice.service.contracts.IUserClientService;
+import org.springframework.web.reactive.function.client.WebClient;
+import java.util.UUID;
+
+
+public class UserClientService implements IUserClientService {
+    private final WebClient webClient;
+
+    public UserClientService(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
+
+    public boolean isUserExists(UUID userId) {
+        try
+        {
+            return Boolean.TRUE.equals(webClient.get()
+                    .uri("http://identity-service/api/users/{id}/getUser", userId)
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block());
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+}
