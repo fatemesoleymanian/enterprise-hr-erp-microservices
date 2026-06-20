@@ -1,10 +1,8 @@
 package com.example.erp.employeeservice.controller;
 
 import com.example.erp.common.api.ApiResponse;
-import com.example.erp.employeeservice.dto.CreateEmployeeRequestDto;
-import com.example.erp.employeeservice.dto.CreateEmployeeResponseDto;
-import com.example.erp.employeeservice.dto.FindEmployeeResponseDto;
-import com.example.erp.employeeservice.repository.IEmployeeRepository;
+import com.example.erp.employeeservice.domain.Status;
+import com.example.erp.employeeservice.dto.*;
 import com.example.erp.employeeservice.service.contracts.IEmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -56,4 +54,41 @@ public class EmployeeController
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(result));
     }
+
+    @PutMapping("/update{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','HR_MANAGER')")
+    public ResponseEntity<ApiResponse<UpdateEmployeeResponseDto>> update(@PathVariable UUID id,
+                                                                         @RequestBody  UpdateEmployeeRequestDto  request)
+    {
+        var result = employeeService.update(id, request);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(result));
+    }
+
+    @PatchMapping("/update-status{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','HR_MANAGER')")
+    public ResponseEntity<ApiResponse<UpdateStatusEmployeeResponseDto>> updateStatus(@PathVariable UUID id, @RequestBody Status status)
+    {
+        var result = employeeService.updateStatus(id, status);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(result));
+    }
+
+    @PatchMapping("/update-department/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','HR_MANAGER')")
+    public ResponseEntity<ApiResponse<UpdateDepartmentEmployeeResponseDto>> updateDepartment(
+            @PathVariable("id") UUID id,
+            @RequestBody UUID department_id
+    ) {
+        var result = employeeService.updateDepartment(id, department_id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(result));
+    }
+
+
+
 }

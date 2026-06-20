@@ -2,9 +2,8 @@ package com.example.erp.employeeservice.controllers;
 
 import com.example.erp.employeeservice.controller.EmployeeController;
 import com.example.erp.employeeservice.domain.Status;
-import com.example.erp.employeeservice.dto.CreateEmployeeRequestDto;
-import com.example.erp.employeeservice.dto.CreateEmployeeResponseDto;
-import com.example.erp.employeeservice.dto.FindEmployeeResponseDto;
+import com.example.erp.employeeservice.dto.*;
+import com.example.erp.employeeservice.exceptions.EmployeeNotFoundCustomException;
 import com.example.erp.employeeservice.service.services.EmployeeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -24,13 +23,11 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EmployeeController.class)
 public class EmployeeControllerTest
@@ -174,4 +171,127 @@ public class EmployeeControllerTest
 
         verify(employeeService, times(1)).findAll();
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void update_shouldReturnUpdatedEmployee() throws Exception {
+        UUID employeeId = UUID.randomUUID();
+
+        UpdateEmployeeRequestDto requestDto = new UpdateEmployeeRequestDto();
+        requestDto.setFirst_name("Arash");
+        requestDto.setLast_name("Zarei");
+        requestDto.setEmployee_number("EMP-NEW");
+
+        UpdateEmployeeResponseDto responseDto = new UpdateEmployeeResponseDto();
+        responseDto.setId(employeeId);
+        responseDto.setFirst_name("Arash");
+        responseDto.setEmployee_number("EMP-NEW");
+
+        when(employeeService.update(eq(employeeId), any(UpdateEmployeeRequestDto.class)))
+                .thenReturn(responseDto);
+
+        mockMvc.perform(put("/api/employee/update{id}", employeeId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.first_name").value("Arash"))
+                .andExpect(jsonPath("$.data.employee_number").value("EMP-NEW"));
+    }
+
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void update_whenNotFound_shouldReturn404() throws Exception {
+        UUID id = UUID.randomUUID();
+
+        UpdateEmployeeRequestDto requestDto = new UpdateEmployeeRequestDto();
+        requestDto.setFirst_name("Ali");
+        requestDto.setLast_name("Ahmadi");
+        requestDto.setEmployee_number("EMP-001");
+
+        when(employeeService.update(eq(id), any(UpdateEmployeeRequestDto.class)))
+                .thenThrow(new EmployeeNotFoundCustomException(id));
+
+        mockMvc.perform(put("/api/employee/update" + id)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateStatus_whenAdmin_shouldReturn200() throws Exception {
+        UUID employeeId = UUID.randomUUID();
+        Status newStatus = Status.ACTIVE;
+
+        UpdateStatusEmployeeResponseDto responseDto = new UpdateStatusEmployeeResponseDto(
+                employeeId,
+                "ACTIVE",
+                OffsetDateTime.now()
+        );
+
+        when(employeeService.updateStatus(eq(employeeId), eq(newStatus)))
+                .thenReturn(responseDto);
+
+        mockMvc.perform(patch("/api/employee/update-status" + employeeId) // دقت به فرمت URL شما
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newStatus))) // ارسال "ACTIVE" در Body
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(employeeId.toString()))
+                .andExpect(jsonPath("$.data.status").value("ACTIVE"));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void updateStatus_whenUserRole_shouldReturn403() throws Exception {
+        UUID employeeId = UUID.randomUUID();
+        Status newStatus = Status.ACTIVE;
+
+        mockMvc.perform(patch("/api/employee/update-status" + employeeId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newStatus)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateDepartment_shouldReturnUpdatedDepartment() throws Exception {
+
+        UUID employeeId = UUID.randomUUID();
+        UUID departmentId = UUID.randomUUID();
+        OffsetDateTime updatedAt = OffsetDateTime.now();
+
+        UpdateDepartmentEmployeeResponseDto responseDto =
+                new UpdateDepartmentEmployeeResponseDto(
+                        employeeId,
+                        departmentId,
+                        updatedAt
+                );
+
+        when(employeeService.updateDepartment(eq(employeeId), eq(departmentId)))
+                .thenReturn(responseDto);
+
+        mockMvc.perform(
+                        patch("/api/employee/update-department/" + employeeId)
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(departmentId))
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.data.id").value(employeeId.toString()))
+                .andExpect(jsonPath("$.data.departmentId").value(departmentId.toString()))
+                .andExpect(jsonPath("$.data.updatedAt").exists());
+
+        verify(employeeService).updateDepartment(employeeId, departmentId);
+    }
+
+
+
 }

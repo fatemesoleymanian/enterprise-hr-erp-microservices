@@ -2,11 +2,11 @@ package com.example.erp.employeeservice.service;
 
 import com.example.erp.employeeservice.domain.Employee;
 import com.example.erp.employeeservice.domain.Status;
-import com.example.erp.employeeservice.dto.CreateEmployeeRequestDto;
-import com.example.erp.employeeservice.dto.FindEmployeeResponseDto;
+import com.example.erp.employeeservice.dto.*;
 import com.example.erp.employeeservice.exceptions.DepartmentNotFoundCustomException;
 import com.example.erp.employeeservice.exceptions.EmployeeNotFoundCustomException;
 import com.example.erp.employeeservice.exceptions.UserNotFoundCustomException;
+import com.example.erp.employeeservice.mapper.UpdateEmployeeMapper;
 import com.example.erp.employeeservice.service.services.EmployeeService;
 import com.example.erp.employeeservice.repository.IEmployeeRepository;
 import com.example.erp.employeeservice.events.IEmployeeEventPublisher;
@@ -16,6 +16,8 @@ import com.example.erp.employeeservice.service.contracts.IDepartmentClientServic
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.time.OffsetDateTime;
@@ -247,6 +249,179 @@ class EmployeeServiceTest {
 
         verify(employeeRepository, times(1)).findAll();
         verifyNoMoreInteractions(employeeRepository);
+    }
+
+
+    @Test
+    void update_shouldUpdateEmployeeSuccessfully() {
+
+        UUID employeeId = UUID.randomUUID();
+
+        Employee existingEmployee = new Employee();
+        existingEmployee.setId(employeeId);
+
+        UpdateEmployeeRequestDto requestDto = new UpdateEmployeeRequestDto();
+        requestDto.setEmployee_number("EMP-1001");
+        requestDto.setFirst_name("Ali");
+        requestDto.setLast_name("Ahmadi");
+        requestDto.setEmail("ali@test.com");
+        requestDto.setVersion(2);
+        requestDto.setStatus(Status.ACTIVE);
+
+        Employee mappedEntity = new Employee();
+        mappedEntity.setId(employeeId);
+        mappedEntity.setEmployee_number("EMP-1001");
+        mappedEntity.setFirst_name("Ali");
+        mappedEntity.setLast_name("Ahmadi");
+        mappedEntity.setEmail("ali@test.com");
+
+        Employee savedEntity = mappedEntity;
+
+        UpdateEmployeeResponseDto responseDto = new UpdateEmployeeResponseDto();
+        responseDto.setId(employeeId);
+        responseDto.setEmployee_number("EMP-1001");
+        responseDto.setFirst_name("Ali");
+        responseDto.setLast_name("Ahmadi");
+        responseDto.setEmail("ali@test.com");
+
+        when(employeeRepository.findById(employeeId))
+                .thenReturn(Optional.of(existingEmployee));
+
+        when(employeeRepository.save(mappedEntity))
+                .thenReturn(savedEntity);
+
+        try (MockedStatic<UpdateEmployeeMapper> mapper = Mockito.mockStatic(UpdateEmployeeMapper.class)) {
+
+            mapper.when(() -> UpdateEmployeeMapper.mapUpdateToEntity(requestDto))
+                    .thenReturn(mappedEntity);
+
+            mapper.when(() -> UpdateEmployeeMapper.mapEntityToUpdate(savedEntity))
+                    .thenReturn(responseDto);
+
+            UpdateEmployeeResponseDto result =
+                    employeeService.update(employeeId, requestDto);
+
+            assertNotNull(result);
+            assertEquals("EMP-1001", result.getEmployee_number());
+            assertEquals("Ali", result.getFirst_name());
+            assertEquals("Ahmadi", result.getLast_name());
+
+            verify(employeeRepository).findById(employeeId);
+            verify(employeeRepository).save(mappedEntity);
+        }
+    }
+
+    @Test
+    void update_whenEmployeeNotFound_shouldThrowException() {
+
+        UUID employeeId = UUID.randomUUID();
+
+        UpdateEmployeeRequestDto requestDto = new UpdateEmployeeRequestDto();
+
+        when(employeeRepository.findById(employeeId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EmployeeNotFoundCustomException.class,
+                () -> employeeService.update(employeeId, requestDto));
+
+        verify(employeeRepository).findById(employeeId);
+        verify(employeeRepository, never()).save(any());
+    }
+
+
+    @Test
+    void updateStatus_whenEmployeeExists_shouldUpdateStatusAndReturnResponse() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        Status newStatus = Status.ACTIVE;
+
+        Employee employee = new Employee();
+        employee.setId(id);
+        employee.setStatus(Status.TERMINATED);
+        employee.setUpdated_at(OffsetDateTime.now().minusDays(1));
+
+        when(employeeRepository.findById(id)).thenReturn(Optional.of(employee));
+        when(employeeRepository.save(any(Employee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UpdateStatusEmployeeResponseDto result = employeeService.updateStatus(id, newStatus);
+
+        assertNotNull(result);
+        assertEquals(id, result.getId());
+        assertEquals(newStatus.name(), result.getStatus());
+
+        assertEquals(newStatus, employee.getStatus());
+        assertNotNull(employee.getUpdated_at());
+
+        verify(employeeRepository).findById(id);
+        verify(employeeRepository).save(employee);
+    }
+
+    @Test
+    void updateStatus_whenEmployeeNotFound_shouldThrowException() {
+        UUID id = UUID.randomUUID();
+        Status newStatus = Status.ACTIVE;
+
+        when(employeeRepository.findById(id)).thenReturn(Optional.empty());
+
+        EmployeeNotFoundCustomException exception = assertThrows(
+                EmployeeNotFoundCustomException.class,
+                () -> employeeService.updateStatus(id, newStatus)
+        );
+
+        assertTrue(exception.getMessage().contains(id.toString()));
+
+        verify(employeeRepository).findById(id);
+        verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+
+    @Test
+    void updateDepartment_whenEmployeeExists_shouldUpdateDepartment() {
+
+        UUID employeeId = UUID.randomUUID();
+        UUID departmentId = UUID.randomUUID();
+
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        employee.setDepartment_id(null);
+        employee.setUpdated_at(OffsetDateTime.now().minusDays(1));
+
+        when(employeeRepository.findById(employeeId))
+                .thenReturn(Optional.of(employee));
+
+        when(employeeRepository.save(any(Employee.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        UpdateDepartmentEmployeeResponseDto result =
+                employeeService.updateDepartment(employeeId, departmentId);
+
+        assertNotNull(result);
+        assertEquals(employeeId, result.getId());
+        assertEquals(departmentId, result.getDepartmentId());
+
+        assertEquals(departmentId, employee.getDepartment_id());
+        assertNotNull(employee.getUpdated_at());
+
+        verify(employeeRepository).findById(employeeId);
+        verify(employeeRepository).save(employee);
+    }
+
+    @Test
+    void updateDepartment_whenEmployeeNotFound_shouldThrowException() {
+
+        UUID employeeId = UUID.randomUUID();
+        UUID departmentId = UUID.randomUUID();
+
+        when(employeeRepository.findById(employeeId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                EmployeeNotFoundCustomException.class,
+                () -> employeeService.updateDepartment(employeeId, departmentId)
+        );
+
+        verify(employeeRepository).findById(employeeId);
+        verify(employeeRepository, never()).save(any());
     }
 }
 
