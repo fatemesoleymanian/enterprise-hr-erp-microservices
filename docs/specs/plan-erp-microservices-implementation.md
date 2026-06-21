@@ -108,11 +108,11 @@ ERP-009 Documentation and Interview Evidence
 
 ### Task 0.1: Initialize Repository Standards
 
-- [ ] Create the GitHub repository named `erp-system`.
+ - [x] Create the GitHub repository named `erp-system`.
 
-- [ ] Create `main` and `develop` branches.
+ - [x] Create `main` and `develop` branches.
 
-- [ ] Protect `main` with these rules:
+ - [x] Protect `main` with these rules:
 
 ```text
 Require pull request before merging.
@@ -122,7 +122,7 @@ Block force pushes.
 Block branch deletion.
 ```
 
-- [ ] Protect `develop` with these rules:
+ - [x] Protect `develop` with these rules:
 
 ```text
 Require pull request before merging.
@@ -130,7 +130,7 @@ Require at least 1 approval.
 Require status checks to pass.
 ```
 
-- [ ] Add this content to `docs/team/branching-strategy.md`:
+ - [x] Add this content to `docs/team/branching-strategy.md`:
 
 ```markdown
 # Branching Strategy
@@ -154,7 +154,7 @@ Rules:
 - Pull requests must reference a Jira ticket.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docs/team/branching-strategy.md
@@ -163,7 +163,7 @@ git commit -m "docs(team): add branching strategy"
 
 ### Task 0.2: Define Done And Review Rules
 
-- [ ] Add this content to `docs/team/definition-of-done.md`:
+ - [x] Add this content to `docs/team/definition-of-done.md`:
 
 ```markdown
 # Definition Of Done
@@ -182,7 +182,7 @@ A ticket is done only when:
 - Reviewer comments are resolved.
 ```
 
-- [ ] Add this content to `docs/team/code-review-guidelines.md`:
+ - [x] Add this content to `docs/team/code-review-guidelines.md`:
 
 ```markdown
 # Code Review Guidelines
@@ -201,7 +201,7 @@ Reviewers check:
 Reviewers should ask questions before requesting large rewrites.
 ```
 
-- [ ] Add this content to `.github/pull_request_template.md`:
+ - [x] Add this content to `.github/pull_request_template.md`:
 
 ```markdown
 ## Jira Ticket
@@ -252,7 +252,7 @@ git commit -m "docs(team): add definition of done and PR template"
 
 ### Task 0.3: Create Jira Story Template
 
-- [ ] Add this content to `docs/jira/epics-and-stories.md`:
+ - [x] Add this content to `docs/jira/epics-and-stories.md`:
 
 ```markdown
 # Jira Epics And Story Template
@@ -320,7 +320,7 @@ Test expectations:
 - Security tests verify unauthenticated requests return 401.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docs/jira/epics-and-stories.md
@@ -349,7 +349,7 @@ git commit -m "docs(jira): add epics and story quality standard"
 
 ### Task 1.1: Generate Spring Boot Services
 
-- [ ] Create `discovery-server` from Spring Initializr with:
+ - [x] Create `discovery-server` from Spring Initializr with:
 
 ```text
 Project: Maven
@@ -361,7 +361,7 @@ Group: com.example.erp
 Artifact: discovery-server
 ```
 
-- [ ] Create `api-gateway` from Spring Initializr with:
+ - [x] Create `api-gateway` from Spring Initializr with:
 
 ```text
 Project: Maven
@@ -373,7 +373,7 @@ Group: com.example.erp
 Artifact: api-gateway
 ```
 
-- [ ] Create `common-lib` as a Maven module for shared DTOs and error response types:
+ - [x] Create `common-lib` as a Maven module for shared DTOs and error response types:
 
 ```text
 Group: com.example.erp
@@ -382,7 +382,7 @@ Packaging: jar
 Java: 21
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add discovery-server api-gateway common-lib
@@ -391,7 +391,7 @@ git commit -m "feat(platform): scaffold discovery gateway and common library"
 
 ### Task 1.2: Configure Discovery Server
 
-- [ ] In `discovery-server/src/main/resources/application.yml`, configure:
+ - [x] In `discovery-server/src/main/resources/application.yml`, configure:
 
 ```yaml
 server:
@@ -413,7 +413,7 @@ management:
         include: health,info
 ```
 
-- [ ] In `discovery-server/src/main/java/com/example/erp/discoveryserver/DiscoveryServerApplication.java`, enable Eureka:
+ - [x] In `discovery-server/src/main/java/com/example/erp/discoveryserver/DiscoveryServerApplication.java`, enable Eureka:
 
 ```java
 package com.example.erp.discoveryserver;
@@ -431,7 +431,7 @@ public class DiscoveryServerApplication {
 }
 ```
 
-- [ ] Run:
+ - [x] Run:
 
 ```bash
 cd discovery-server
@@ -444,7 +444,7 @@ Expected:
 BUILD SUCCESS
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add discovery-server
@@ -453,7 +453,7 @@ git commit -m "feat(platform): configure discovery server"
 
 ### Task 1.3: Configure Gateway Routes
 
-- [ ] In `api-gateway/src/main/resources/application.yml`, configure:
+ - [x] In `api-gateway/src/main/resources/application.yml`, configure:
 
 ```yaml
 server:
@@ -502,7 +502,7 @@ management:
         include: health,info
 ```
 
-- [ ] Run:
+ - [x] Run:
 
 ```bash
 cd api-gateway
@@ -515,7 +515,7 @@ Expected:
 BUILD SUCCESS
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add api-gateway
@@ -524,7 +524,7 @@ git commit -m "feat(platform): configure gateway routes"
 
 ### Task 1.4: Add Common API Response Types
 
-- [ ] In `common-lib/src/main/java/com/example/erp/common/api/ApiResponse.java`, create:
+ - [x] In `common-lib/src/main/java/com/example/erp/common/api/ApiResponse.java`, create:
 
 ```java
 package com.example.erp.common.api;
@@ -542,7 +542,7 @@ public record ApiResponse<T>(
 }
 ```
 
-- [ ] In `common-lib/src/main/java/com/example/erp/common/api/ErrorResponse.java`, create:
+ - [x] In `common-lib/src/main/java/com/example/erp/common/api/ErrorResponse.java`, create:
 
 ```java
 package com.example.erp.common.api;
@@ -561,7 +561,7 @@ public record ErrorResponse(
 }
 ```
 
-- [ ] Run:
+ - [x] Run:
 
 ```bash
 cd common-lib
@@ -574,7 +574,7 @@ Expected:
 BUILD SUCCESS
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add common-lib
@@ -583,7 +583,7 @@ git commit -m "feat(common): add standard API response types"
 
 ### Task 1.5: Add Docker Compose Infrastructure
 
-- [ ] Create `docker-compose.yml`:
+ - [x] Create `docker-compose.yml`:
 
 ```yaml
 services:
@@ -655,7 +655,7 @@ services:
       KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
 ```
 
-- [ ] Run:
+ - [x] Run:
 
 ```bash
 docker compose up -d
@@ -669,7 +669,7 @@ All postgres containers are running.
 Kafka container is running.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docker-compose.yml
@@ -678,7 +678,7 @@ git commit -m "feat(platform): add local docker compose infrastructure"
 
 ### Task 1.6: Add CI Pipeline
 
-- [ ] Create `.github/workflows/ci.yml`:
+ - [x] Create `.github/workflows/ci.yml`:
 
 ```yaml
 name: CI
@@ -717,7 +717,7 @@ jobs:
         run: ./mvnw test
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add .github/workflows/ci.yml
@@ -745,7 +745,7 @@ git commit -m "ci: add initial service build workflow"
 
 ### Task 2.1: Write Identity Service Spec
 
-- [ ] Create `docs/specs/identity/requirements.md`:
+ - [x] Create `docs/specs/identity/requirements.md`:
 
 ```markdown
 # Identity Service Requirements
@@ -768,7 +768,7 @@ Business rules:
 - Only ADMIN can create users and change roles.
 ```
 
-- [ ] Create `docs/specs/identity/acceptance-tests.md`:
+ - [x] Create `docs/specs/identity/acceptance-tests.md`:
 
 ```markdown
 # Identity Acceptance Tests
@@ -794,7 +794,7 @@ Then the API returns 201
 And a UserCreated event is published.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docs/specs/identity
@@ -803,13 +803,13 @@ git commit -m "docs(identity): add service spec"
 
 ### Task 2.2: Scaffold Identity Service
 
-- [ ] Generate `identity-service` with:
+ - [x] Generate `identity-service` with:
 
 ```text
 Dependencies: Spring Web, Spring Security, Spring Data JPA, PostgreSQL Driver, Flyway, Eureka Discovery Client, Validation, Spring Boot Actuator, Spring for Apache Kafka, Springdoc OpenAPI
 ```
 
-- [ ] Configure `identity-service/src/main/resources/application.yml`:
+ - [x] Configure `identity-service/src/main/resources/application.yml`:
 
 ```yaml
 server:
@@ -840,7 +840,7 @@ jwt:
   expiration-minutes: 60
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add identity-service
@@ -849,7 +849,7 @@ git commit -m "feat(identity): scaffold service"
 
 ### Task 2.3: Implement Identity Data Model
 
-- [ ] Create Flyway migration `identity-service/src/main/resources/db/migration/V1__create_identity_tables.sql`:
+ - [x] Create Flyway migration `identity-service/src/main/resources/db/migration/V1__create_identity_tables.sql`:
 
 ```sql
 CREATE TABLE users (
@@ -880,7 +880,7 @@ CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_status ON users(status);
 ```
 
-- [ ] Implement entities:
+ - [x] Implement entities:
 
 ```text
 identity-service/src/main/java/com/example/erp/identity/user/User.java
@@ -890,7 +890,7 @@ identity-service/src/main/java/com/example/erp/identity/user/UserRepository.java
 identity-service/src/main/java/com/example/erp/identity/role/RoleRepository.java
 ```
 
-- [ ] Run:
+ - [x] Run:
 
 ```bash
 cd identity-service
@@ -903,7 +903,7 @@ Expected:
 BUILD SUCCESS
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add identity-service
@@ -912,14 +912,14 @@ git commit -m "feat(identity): add user and role persistence model"
 
 ### Task 2.4: Implement Login And JWT
 
-- [ ] Implement request and response records:
+ - [x] Implement request and response records:
 
 ```text
 LoginRequest(email, password)
 LoginResponse(accessToken, tokenType, expiresInMinutes)
 ```
 
-- [ ] Implement:
+ - [x] Implement:
 
 ```text
 AuthController
@@ -928,7 +928,7 @@ JwtService
 SecurityConfig
 ```
 
-- [ ] Add tests:
+ - [x] Add tests:
 
 ```text
 AuthServiceTest verifies active user login succeeds.
@@ -936,7 +936,7 @@ AuthServiceTest verifies disabled user login fails.
 JwtServiceTest verifies generated token contains subject and roles.
 ```
 
-- [ ] Run:
+ - [x] Run:
 
 ```bash
 cd identity-service
@@ -949,7 +949,7 @@ Expected:
 BUILD SUCCESS
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add identity-service
@@ -958,7 +958,7 @@ git commit -m "feat(identity): add login and JWT issuing"
 
 ### Task 2.5: Add User Management APIs
 
-- [ ] Implement APIs:
+ - [x] Implement APIs:
 
 ```text
 POST /api/users
@@ -967,7 +967,7 @@ PATCH /api/users/{id}/status
 PUT /api/users/{id}/roles
 ```
 
-- [ ] Add events:
+ - [x] Add events:
 
 ```text
 UserCreated
@@ -975,7 +975,7 @@ UserDisabled
 UserRolesChanged
 ```
 
-- [ ] Add controller tests for:
+ - [x] Add controller tests for:
 
 ```text
 ADMIN can create user.
@@ -984,7 +984,7 @@ Duplicate email returns 409.
 Missing required fields return 400.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add identity-service docs/specs/identity
@@ -1012,7 +1012,7 @@ git commit -m "feat(identity): add user management APIs"
 
 ### Task 3.1: Write Department Service Spec
 
-- [ ] Document requirements:
+ - [x] Document requirements:
 
 ```markdown
 # Department Service Requirements
@@ -1028,7 +1028,7 @@ Business rules:
 - Only ADMIN and HR_MANAGER can create or update departments.
 ```
 
-- [ ] Document events:
+ - [x] Document events:
 
 ```markdown
 # Department Events
@@ -1050,7 +1050,7 @@ Payload:
 - managerUserId
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docs/specs/department
@@ -1059,15 +1059,15 @@ git commit -m "docs(department): add service spec"
 
 ### Task 3.2: Scaffold And Configure Department Service
 
-- [ ] Generate `department-service` with:
+ - [x] Generate `department-service` with:
 
 ```text
 Dependencies: Spring Web, Spring Data JPA, PostgreSQL Driver, Flyway, Eureka Discovery Client, Validation, Spring Boot Actuator, Spring for Apache Kafka, Springdoc OpenAPI
 ```
 
-- [ ] Configure service name `department-service`, port `8082`, database port `5434`, and Kafka `localhost:9092`.
+ - [x] Configure service name `department-service`, port `8082`, database port `5434`, and Kafka `localhost:9092`.
 
-- [ ] Add Flyway migration:
+ - [x] Add Flyway migration:
 
 ```sql
 CREATE TABLE departments (
@@ -1085,7 +1085,7 @@ CREATE INDEX idx_departments_parent ON departments(parent_department_id);
 CREATE INDEX idx_departments_manager ON departments(manager_user_id);
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add department-service
@@ -1094,7 +1094,7 @@ git commit -m "feat(department): scaffold service and schema"
 
 ### Task 3.3: Implement Department APIs
 
-- [ ] Implement:
+ - [x] Implement:
 
 ```text
 POST /api/departments
@@ -1104,7 +1104,7 @@ PUT /api/departments/{id}
 PATCH /api/departments/{id}/manager
 ```
 
-- [ ] Add tests:
+ - [x] Add tests:
 
 ```text
 Create department returns 201.
@@ -1113,14 +1113,14 @@ Assign manager updates managerUserId.
 Missing department returns 404.
 ```
 
-- [ ] Publish:
+ - [x] Publish:
 
 ```text
 DepartmentCreated
 DepartmentManagerAssigned
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add department-service docs/specs/department
@@ -1148,7 +1148,7 @@ git commit -m "feat(department): add department management APIs"
 
 ### Task 4.1: Write Employee Service Spec
 
-- [ ] Document requirements:
+ - [x] Document requirements:
 
 ```markdown
 # Employee Service Requirements
@@ -1165,7 +1165,7 @@ Business rules:
 - Only ADMIN and HR_MANAGER can create or update employees.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docs/specs/employee
@@ -1174,15 +1174,15 @@ git commit -m "docs(employee): add service spec"
 
 ### Task 4.2: Scaffold And Configure Employee Service
 
-- [ ] Generate `employee-service` with:
+ - [x] Generate `employee-service` with:
 
 ```text
 Dependencies: Spring Web, Spring Data JPA, PostgreSQL Driver, Flyway, Eureka Discovery Client, Validation, Spring Boot Actuator, Spring for Apache Kafka, Springdoc OpenAPI
 ```
 
-- [ ] Configure service name `employee-service`, port `8083`, database port `5435`, and Kafka `localhost:9092`.
+ - [x] Configure service name `employee-service`, port `8083`, database port `5435`, and Kafka `localhost:9092`.
 
-- [ ] Add Flyway migration:
+ - [x] Add Flyway migration:
 
 ```sql
 CREATE TABLE employees (
@@ -1207,7 +1207,7 @@ CREATE INDEX idx_employees_manager ON employees(manager_employee_id);
 CREATE INDEX idx_employees_status ON employees(status);
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add employee-service
@@ -1216,7 +1216,7 @@ git commit -m "feat(employee): scaffold service and schema"
 
 ### Task 4.3: Implement Employee APIs
 
-- [ ] Implement:
+ - [x] Implement:
 
 ```text
 POST /api/employees
@@ -1227,7 +1227,7 @@ PATCH /api/employees/{id}/department
 PATCH /api/employees/{id}/status
 ```
 
-- [ ] Add tests:
+ - [x] Add tests:
 
 ```text
 Create employee returns 201.
@@ -1237,7 +1237,7 @@ Changing status publishes EmployeeStatusChanged.
 Missing employee returns 404.
 ```
 
-- [ ] Publish:
+ - [x] Publish:
 
 ```text
 EmployeeCreated
@@ -1245,7 +1245,7 @@ EmployeeDepartmentChanged
 EmployeeStatusChanged
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add employee-service docs/specs/employee
@@ -1273,7 +1273,7 @@ git commit -m "feat(employee): add employee management APIs"
 
 ### Task 5.1: Write Attendance Service Spec
 
-- [ ] Create requirements:
+ - [x] Create requirements:
 
 ```markdown
 # Attendance Service Requirements
@@ -1290,7 +1290,7 @@ Business rules:
 - Monthly summary includes present days, late days, early leave days, absent days, and total worked minutes.
 ```
 
-- [ ] Create acceptance tests:
+ - [x] Create acceptance tests:
 
 ```markdown
 # Attendance Acceptance Tests
@@ -1316,7 +1316,7 @@ Then the record includes LATE
 And AttendanceViolationDetected is published.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docs/specs/attendance
@@ -1325,15 +1325,15 @@ git commit -m "docs(attendance): add service spec"
 
 ### Task 5.2: Scaffold And Configure Attendance Service
 
-- [ ] Generate `attendance-service` with:
+ - [x] Generate `attendance-service` with:
 
 ```text
 Dependencies: Spring Web, Spring Data JPA, PostgreSQL Driver, Flyway, Eureka Discovery Client, Validation, Spring Boot Actuator, Spring for Apache Kafka, Springdoc OpenAPI
 ```
 
-- [ ] Configure service name `attendance-service`, port `8084`, database port `5436`, and Kafka `localhost:9092`.
+ - [x] Configure service name `attendance-service`, port `8084`, database port `5436`, and Kafka `localhost:9092`.
 
-- [ ] Add Flyway migration:
+ - [x] Add Flyway migration:
 
 ```sql
 CREATE TABLE attendance_policies (
@@ -1367,7 +1367,7 @@ CREATE INDEX idx_attendance_date ON attendance_records(attendance_date);
 CREATE INDEX idx_attendance_status ON attendance_records(status);
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add attendance-service
@@ -1376,7 +1376,7 @@ git commit -m "feat(attendance): scaffold service and schema"
 
 ### Task 5.3: Implement Attendance Rules With Tests
 
-- [ ] Create unit tests for the attendance policy:
+ - [x] Create unit tests for the attendance policy:
 
 ```text
 09:00 check-in returns PRESENT.
@@ -1386,7 +1386,7 @@ git commit -m "feat(attendance): scaffold service and schema"
 16:00 check-out does not return EARLY_LEAVE.
 ```
 
-- [ ] Implement:
+ - [x] Implement:
 
 ```text
 AttendancePolicyEvaluator
@@ -1395,7 +1395,7 @@ AttendanceRecord
 AttendanceRecordRepository
 ```
 
-- [ ] Run:
+ - [x] Run:
 
 ```bash
 cd attendance-service
@@ -1408,7 +1408,7 @@ Expected:
 BUILD SUCCESS
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add attendance-service
@@ -1417,7 +1417,7 @@ git commit -m "feat(attendance): add attendance policy evaluation"
 
 ### Task 5.4: Implement Check-In And Check-Out APIs
 
-- [ ] Implement:
+ - [x] Implement:
 
 ```text
 POST /api/attendance/check-in
@@ -1426,7 +1426,7 @@ GET /api/attendance/employees/{employeeId}
 GET /api/attendance/employees/{employeeId}/monthly-summary
 ```
 
-- [ ] Add tests:
+ - [x] Add tests:
 
 ```text
 First check-in returns 201.
@@ -1437,7 +1437,7 @@ Check-out calculates worked minutes.
 Monthly summary returns aggregated attendance counts.
 ```
 
-- [ ] Publish:
+ - [x] Publish:
 
 ```text
 AttendanceCheckedIn
@@ -1445,7 +1445,7 @@ AttendanceCheckedOut
 AttendanceViolationDetected
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add attendance-service docs/specs/attendance
@@ -1473,7 +1473,7 @@ git commit -m "feat(attendance): add check-in check-out and summaries"
 
 ### Task 6.1: Write Reporting Service Spec
 
-- [ ] Document:
+ - [x] Document:
 
 ```markdown
 # Reporting Service Requirements
@@ -1488,7 +1488,7 @@ Business rules:
 - Reports expose department headcount, employee status summary, and monthly attendance summary.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docs/specs/reporting
@@ -1497,15 +1497,15 @@ git commit -m "docs(reporting): add service spec"
 
 ### Task 6.2: Scaffold Reporting Service And Projections
 
-- [ ] Generate `reporting-service` with:
+ - [x] Generate `reporting-service` with:
 
 ```text
 Dependencies: Spring Web, Spring Data JPA, PostgreSQL Driver, Flyway, Eureka Discovery Client, Validation, Spring Boot Actuator, Spring for Apache Kafka, Springdoc OpenAPI
 ```
 
-- [ ] Configure service name `reporting-service`, port `8085`, database port `5437`, and Kafka `localhost:9092`.
+ - [x] Configure service name `reporting-service`, port `8085`, database port `5437`, and Kafka `localhost:9092`.
 
-- [ ] Add Flyway migration:
+ - [x] Add Flyway migration:
 
 ```sql
 CREATE TABLE employee_report_views (
@@ -1538,7 +1538,7 @@ CREATE TABLE attendance_monthly_report_views (
 );
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add reporting-service
@@ -1547,7 +1547,7 @@ git commit -m "feat(reporting): scaffold service and projections"
 
 ### Task 6.3: Consume Events And Expose Reports
 
-- [ ] Consume:
+ - [x] Consume:
 
 ```text
 DepartmentCreated
@@ -1560,7 +1560,7 @@ AttendanceCheckedOut
 AttendanceViolationDetected
 ```
 
-- [ ] Implement:
+ - [x] Implement:
 
 ```text
 GET /api/reports/attendance/monthly
@@ -1569,7 +1569,7 @@ GET /api/reports/employees/status-summary
 GET /api/reports/departments/headcount
 ```
 
-- [ ] Add tests:
+ - [x] Add tests:
 
 ```text
 EmployeeCreated creates employee projection.
@@ -1579,7 +1579,7 @@ AttendanceCheckedOut updates monthly attendance projection.
 Headcount report counts active employees by department.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add reporting-service docs/specs/reporting
@@ -1607,7 +1607,7 @@ git commit -m "feat(reporting): add event projections and report APIs"
 
 ### Task 7.1: Write Notification Service Spec
 
-- [ ] Document:
+ - [x] Document:
 
 ```markdown
 # Notification Service Requirements
@@ -1622,7 +1622,7 @@ Business rules:
 - Real email and SMS delivery are outside MVP.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add docs/specs/notification
@@ -1631,15 +1631,15 @@ git commit -m "docs(notification): add service spec"
 
 ### Task 7.2: Scaffold Notification Service
 
-- [ ] Generate `notification-service` with:
+ - [x] Generate `notification-service` with:
 
 ```text
 Dependencies: Spring Web, Spring Data JPA, PostgreSQL Driver, Flyway, Eureka Discovery Client, Validation, Spring Boot Actuator, Spring for Apache Kafka, Springdoc OpenAPI
 ```
 
-- [ ] Configure service name `notification-service`, port `8086`, database port `5438`, and Kafka `localhost:9092`.
+ - [x] Configure service name `notification-service`, port `8086`, database port `5438`, and Kafka `localhost:9092`.
 
-- [ ] Add Flyway migration:
+ - [x] Add Flyway migration:
 
 ```sql
 CREATE TABLE notifications (
@@ -1660,7 +1660,7 @@ CREATE INDEX idx_notifications_recipient_user ON notifications(recipient_user_id
 CREATE INDEX idx_notifications_read ON notifications(read);
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add notification-service
@@ -1669,21 +1669,21 @@ git commit -m "feat(notification): scaffold service and schema"
 
 ### Task 7.3: Consume Events And Expose Notification APIs
 
-- [ ] Consume:
+ - [x] Consume:
 
 ```text
 AttendanceViolationDetected
 EmployeeStatusChanged
 ```
 
-- [ ] Implement:
+ - [x] Implement:
 
 ```text
 GET /api/notifications
 PATCH /api/notifications/{id}/read
 ```
 
-- [ ] Add tests:
+ - [x] Add tests:
 
 ```text
 AttendanceViolationDetected creates unread HR notification.
@@ -1692,7 +1692,7 @@ Mark notification read sets read true and readAt.
 Missing notification returns 404.
 ```
 
-- [ ] Commit:
+ - [x] Commit:
 
 ```bash
 git add notification-service docs/specs/notification
