@@ -3,6 +3,7 @@ WORKDIR /common
 COPY common-lib/mvnw common-lib/pom.xml ./
 COPY common-lib/.mvn .mvn
 RUN chmod +x mvnw
+RUN ./mvnw dependency:go-offline
 COPY common-lib/src src
 RUN ./mvnw install -DskipTests
 
@@ -12,6 +13,7 @@ COPY --from=common-build /root/.m2 /root/.m2
 COPY identity-service/mvnw identity-service/pom.xml ./
 COPY identity-service/.mvn .mvn
 RUN chmod +x mvnw
+RUN ./mvnw dependency:go-offline
 COPY identity-service/src src
 RUN ./mvnw package -DskipTests
 
