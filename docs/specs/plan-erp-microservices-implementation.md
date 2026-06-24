@@ -1767,7 +1767,7 @@ git commit -m "devops: run full system with docker compose"
 
 ### Task 8.2: Expand CI To All Services
 
-- [ ] Update `.github/workflows/ci.yml` matrix:
+- [x] Update `.github/workflows/ci.yml` matrix:
 
 ```yaml
 strategy:
@@ -1784,7 +1784,7 @@ strategy:
       - notification-service
 ```
 
-- [ ] Commit:
+- [x] Commit:
 
 ```bash
 git add .github/workflows/ci.yml
