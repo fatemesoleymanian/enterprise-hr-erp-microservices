@@ -1,0 +1,271 @@
+{
+  "info": {
+    "_postman_id": "e9fd2eb5-8c74-4da4-8db2-3a20ed758718",
+    "name": "Enterprise HR ERP Microservices",
+    "description": "Requests for the Attendance, Reporting, and Notification services through the API Gateway. Set accessToken and replace the sample entity IDs before running the collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Response status is successful\", function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+          "});",
+          "",
+          "pm.test(\"Response is JSON\", function () {",
+          "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+          "});"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Attendance",
+      "description": "Check-in, check-out, attendance history, and monthly summary requests.",
+      "item": [
+        {
+          "name": "Check In",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"checkInAt\": \"{{checkInAt}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/attendance/check-in",
+            "description": "Creates today's attendance record. Expected response: 201 Created."
+          },
+          "response": []
+        },
+        {
+          "name": "Check Out",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"checkOutAt\": \"{{checkOutAt}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/attendance/check-out",
+            "description": "Checks out an employee who has already checked in on the same date."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee Attendance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/attendance/employees/{{employeeId}}?from={{fromDate}}&to={{toDate}}",
+            "description": "Lists an employee's attendance records in the selected date range."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee Monthly Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/attendance/employees/{{employeeId}}/monthly-summary?year={{year}}&month={{month}}",
+            "description": "Returns monthly attendance totals for an employee."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reporting",
+      "description": "Read-only reports populated from consumed domain events.",
+      "item": [
+        {
+          "name": "Get Monthly Attendance Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/attendance/monthly?year={{year}}&month={{month}}",
+            "description": "Lists monthly attendance projections. Optional employeeId and departmentId filters can be added as query parameters."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Department Attendance Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/departments/{{departmentId}}/attendance?year={{year}}&month={{month}}",
+            "description": "Returns monthly attendance projections and totals for one department."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee Status Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/employees/status-summary?departmentId={{departmentId}}",
+            "description": "Returns employee status counts for a department. Remove departmentId to query all departments."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Department Headcount",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/reports/departments/headcount",
+            "description": "Returns active employee headcount grouped by department."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "description": "List event-created notifications and mark them as read.",
+      "item": [
+        {
+          "name": "List Notifications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (Array.isArray(response.data) && response.data.length > 0) {",
+                  "        pm.collectionVariables.set(\"notificationId\", response.data[0].id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications?recipientRole={{recipientRole}}&read={{notificationRead}}&type={{notificationType}}",
+            "description": "Lists unread HR notifications of the selected type and saves the first result's ID to notificationId. recipientUserId is also supported as an optional query parameter."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Notification As Read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/notifications/{{notificationId}}/read",
+            "description": "Marks the selected notification as read. Run List Notifications first or set notificationId manually."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employeeId",
+      "value": "11111111-1111-1111-1111-111111111111",
+      "type": "string"
+    },
+    {
+      "key": "departmentId",
+      "value": "22222222-2222-2222-2222-222222222222",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
+      "value": "33333333-3333-3333-3333-333333333333",
+      "type": "string"
+    },
+    {
+      "key": "year",
+      "value": "2026",
+      "type": "string"
+    },
+    {
+      "key": "month",
+      "value": "6",
+      "type": "string"
+    },
+    {
+      "key": "fromDate",
+      "value": "2026-06-01",
+      "type": "string"
+    },
+    {
+      "key": "toDate",
+      "value": "2026-06-30",
+      "type": "string"
+    },
+    {
+      "key": "checkInAt",
+      "value": "2026-06-01T09:00:00Z",
+      "type": "string"
+    },
+    {
+      "key": "checkOutAt",
+      "value": "2026-06-01T17:00:00Z",
+      "type": "string"
+    },
+    {
+      "key": "recipientRole",
+      "value": "HR",
+      "type": "string"
+    },
+    {
+      "key": "notificationRead",
+      "value": "false",
+      "type": "string"
+    },
+    {
+      "key": "notificationType",
+      "value": "ATTENDANCE_VIOLATION",
+      "type": "string"
+    }
+  ]
+}
