@@ -118,7 +118,7 @@ class DepartmentControllerTest {
         when(departmentRecordService.update(any(UpdateDepartmentRequestDto.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(put("/api/departments/{id}", id)
+        mockMvc.perform(put("/api/departments/update/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -130,7 +130,8 @@ class DepartmentControllerTest {
         verify(departmentRecordService).update(any(UpdateDepartmentRequestDto.class));
     }
 
-    @Test@WithMockUser(roles = {"ADMIN", "HR_MANAGER"})
+    @Test
+    @WithMockUser(roles = {"ADMIN", "HR_MANAGER"})
     void shouldReturnNotFoundWhenDepartmentDoesNotExist() throws Exception {
         UUID id = UUID.randomUUID();
 

@@ -37,7 +37,7 @@ public class DepartmentController
                 .body(ApiResponse.success(result));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','HR_MANAGER')")
     public ResponseEntity<ApiResponse<UpdateDepartmentResponseDto>> update(
             @PathVariable UUID id,

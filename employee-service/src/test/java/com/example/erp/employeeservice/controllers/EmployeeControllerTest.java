@@ -190,7 +190,7 @@ public class EmployeeControllerTest
         when(employeeService.update(eq(employeeId), any(UpdateEmployeeRequestDto.class)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(put("/api/employees/update{id}", employeeId)
+        mockMvc.perform(put("/api/employees/update/{id}", employeeId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto)))
