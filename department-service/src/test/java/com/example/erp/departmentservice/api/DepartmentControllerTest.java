@@ -1,6 +1,5 @@
 package com.example.erp.departmentservice.api;
 
-import com.example.erp.departmentservice.controller.DepartmentController;
 import com.example.erp.departmentservice.dto.*;
 import com.example.erp.departmentservice.exceptions.DepartmentFindByIdNullCustomException;
 import com.example.erp.departmentservice.service.Contracts.IDepartmentService;
@@ -12,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +54,7 @@ class DepartmentControllerTest {
         when(departmentRecordService.create(any(CreateDepartmentRequestDto.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/api/department/create")
+        mockMvc.perform(post("/api/departments/create")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -88,7 +86,7 @@ class DepartmentControllerTest {
                 .thenReturn(responseDto);
 
         mockMvc.perform(
-                        patch("/api/department/{id}/manager", departmentId)
+                        patch("/api/departments/{id}/manager", departmentId)
                                 .param("managerId", managerId.toString())
                                 .with(csrf())
                 )
@@ -120,7 +118,7 @@ class DepartmentControllerTest {
         when(departmentRecordService.update(any(UpdateDepartmentRequestDto.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(put("/api/department/{id}", id)
+        mockMvc.perform(put("/api/departments/{id}", id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -139,7 +137,7 @@ class DepartmentControllerTest {
         when(departmentRecordService.findById(id))
                 .thenThrow(new DepartmentFindByIdNullCustomException(id));
 
-        mockMvc.perform(get("/api/department/find/{id}", id)
+        mockMvc.perform(get("/api/departments/find/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isNotFound());
 
@@ -158,7 +156,7 @@ class DepartmentControllerTest {
 
         when(departmentRecordService.findAll()).thenReturn(allDepartments);
 
-        mockMvc.perform(get("/api/department/findall")
+        mockMvc.perform(get("/api/departments/findall")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray())

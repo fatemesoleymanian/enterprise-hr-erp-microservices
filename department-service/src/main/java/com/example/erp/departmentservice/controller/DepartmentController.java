@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/api/department")
+@RequestMapping("/api/departments")
 public class DepartmentController
 {
     private final IDepartmentService departmentRecordService;

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/api/employee")
+@RequestMapping("/api/employees")
 public class EmployeeController
 {
     private final IEmployeeService employeeService;
