@@ -66,7 +66,7 @@ public class EmployeeController
                 .body(ApiResponse.success(result));
     }
 
-    @PatchMapping("/update-status{id}")
+    @PatchMapping("/update-status/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','HR_MANAGER')")
     public ResponseEntity<ApiResponse<UpdateStatusEmployeeResponseDto>> updateStatus(@PathVariable UUID id, @RequestBody Status status)
     {

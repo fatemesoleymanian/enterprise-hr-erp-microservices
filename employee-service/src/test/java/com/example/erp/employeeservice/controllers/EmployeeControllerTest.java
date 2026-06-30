@@ -236,10 +236,10 @@ public class EmployeeControllerTest
         when(employeeService.updateStatus(eq(employeeId), eq(newStatus)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(patch("/api/employee/update-status" + employeeId) // دقت به فرمت URL شما
+        mockMvc.perform(patch("/api/employee/update-status/{id}", employeeId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newStatus))) // ارسال "ACTIVE" در Body
+                        .content(objectMapper.writeValueAsString(newStatus)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(employeeId.toString()))
                 .andExpect(jsonPath("$.data.status").value("ACTIVE"));
@@ -251,8 +251,7 @@ public class EmployeeControllerTest
         UUID employeeId = UUID.randomUUID();
         Status newStatus = Status.ACTIVE;
 
-        mockMvc.perform(patch("/api/employee/update-status" + employeeId)
-                        .with(csrf())
+        mockMvc.perform(patch("/api/employee/update-status/{id}", employeeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newStatus)))
                 .andExpect(status().isForbidden());
