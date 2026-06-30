@@ -37,9 +37,10 @@ class DepartmentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    void shouldCreateDepartment() throws Exception {
 
+    @Test
+    @WithMockUser(roles = {"ADMIN","HR_MANAGER"})
+    void shouldCreateDepartment() throws Exception {
         CreateDepartmentRequestDto request =
                 new CreateDepartmentRequestDto("IT", "Information Technology");
 
@@ -56,6 +57,7 @@ class DepartmentControllerTest {
                 .thenReturn(response);
 
         mockMvc.perform(post("/api/department/create")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -97,6 +99,7 @@ class DepartmentControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN","HR_MANAGER"})
     void shouldUpdateDepartment() throws Exception {
         UUID id = UUID.randomUUID();
         OffsetDateTime createdAt = OffsetDateTime.now().minusDays(1);
@@ -118,6 +121,7 @@ class DepartmentControllerTest {
                 .thenReturn(response);
 
         mockMvc.perform(put("/api/department/{id}", id)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -128,7 +132,7 @@ class DepartmentControllerTest {
         verify(departmentRecordService).update(any(UpdateDepartmentRequestDto.class));
     }
 
-    @Test
+    @Test@WithMockUser(roles = {"ADMIN", "HR_MANAGER"})
     void shouldReturnNotFoundWhenDepartmentDoesNotExist() throws Exception {
         UUID id = UUID.randomUUID();
 
@@ -137,12 +141,13 @@ class DepartmentControllerTest {
 
         mockMvc.perform(get("/api/department/find/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                        .andExpect(status().isNotFound());
 
         verify(departmentRecordService).findById(id);
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN", "HR_MANAGER"})
     void shouldFindAllDepartments() throws Exception {
         FindDepartmentResponseDto dept1 = new FindDepartmentResponseDto(
                 UUID.randomUUID(), "IT", "Information Technology");
