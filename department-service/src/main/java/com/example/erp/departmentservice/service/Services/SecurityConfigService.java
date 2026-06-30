@@ -18,8 +18,16 @@ public class SecurityConfigService implements ISecurityConfigService
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/departments/**").hasAnyRole("ADMIN", "HR_MANAGER")
+                        .requestMatchers(
+                                "/api/department/find/**",
+                                "/api/department/findall"
+                        ).permitAll()
+
+                        .requestMatchers("/api/department/**")
+                        .hasAnyRole("ADMIN", "HR_MANAGER")
+
                         .anyRequest().authenticated()
+
                 )
                 .oauth2ResourceServer(oauth -> oauth
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
