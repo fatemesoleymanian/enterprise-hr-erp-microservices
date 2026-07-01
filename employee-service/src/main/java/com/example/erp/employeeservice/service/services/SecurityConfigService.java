@@ -20,7 +20,7 @@ public class SecurityConfigService implements ISecurityConfigService
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/departments/**").hasAnyRole("ADMIN", "HR_MANAGER")
+                        .requestMatchers("/api/employee/**").hasAnyRole("ADMIN", "HR_MANAGER")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth -> oauth
