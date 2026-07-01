@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
+
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -236,10 +236,10 @@ public class EmployeeControllerTest
         when(employeeService.updateStatus(eq(employeeId), eq(newStatus)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(patch("/api/employee/update-status" + employeeId) // دقت به فرمت URL شما
+        mockMvc.perform(patch("/api/employee/update-status/{id}", employeeId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newStatus))) // ارسال "ACTIVE" در Body
+                        .content(objectMapper.writeValueAsString(newStatus)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(employeeId.toString()))
                 .andExpect(jsonPath("$.data.status").value("ACTIVE"));
@@ -251,8 +251,7 @@ public class EmployeeControllerTest
         UUID employeeId = UUID.randomUUID();
         Status newStatus = Status.ACTIVE;
 
-        mockMvc.perform(patch("/api/employee/update-status" + employeeId)
-                        .with(csrf())
+        mockMvc.perform(patch("/api/employee/update-status/{id}", employeeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newStatus)))
                 .andExpect(status().isForbidden());
