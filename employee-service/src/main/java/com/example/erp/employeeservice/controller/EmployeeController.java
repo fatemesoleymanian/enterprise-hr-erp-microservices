@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/api/employee")
+@RequestMapping("/api/employees")
 public class EmployeeController
 {
     private final IEmployeeService employeeService;
@@ -55,7 +55,7 @@ public class EmployeeController
                 .body(ApiResponse.success(result));
     }
 
-    @PutMapping("/update{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','HR_MANAGER')")
     public ResponseEntity<ApiResponse<UpdateEmployeeResponseDto>> update(@PathVariable UUID id,
                                                                          @RequestBody  UpdateEmployeeRequestDto  request)
