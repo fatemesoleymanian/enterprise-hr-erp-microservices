@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "e9fd2eb5-8c74-4da4-8db2-3a20ed758718",
     "name": "Enterprise HR ERP Microservices",
-    "description": "Requests for the Attendance, Reporting, and Notification services through the API Gateway. Set accessToken and replace the sample entity IDs before running the collection.",
+    "description": "Requests for the Department, Employee, Attendance, Reporting, and Notification services through the API Gateway. Set accessToken and replace the sample entity IDs before running the collection.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -34,6 +34,244 @@
   ],
   "item": [
     {
+      "name": "Departments",
+      "description": "Create, update, assign manager, and query department records.",
+      "item": [
+        {
+          "name": "Create Department",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/departments/create",
+            "description": "Creates a department and saves the returned ID to departmentId. Requires ADMIN or HR_MANAGER role.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{departmentName}}\",\n  \"description\": \"{{departmentDescription}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.id) {",
+                  "        pm.collectionVariables.set(\"departmentId\", response.data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Department",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/departments/update/{{departmentId}}",
+            "description": "Updates the selected department. Run Create Department first or set departmentId manually. Requires ADMIN or HR_MANAGER role.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{departmentName}}\",\n  \"description\": \"{{departmentDescription}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Department Manager",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/departments/{{departmentId}}/manager?managerId={{managerId}}",
+            "description": "Assigns a manager user to the selected department. Requires ADMIN or HR_MANAGER role."
+          },
+          "response": []
+        },
+        {
+          "name": "Find Department By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/departments/find/{{departmentId}}",
+            "description": "Returns one department by ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Find All Departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/departments/findall",
+            "description": "Returns all department records."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "description": "Create, update, update status, update department, and query employee records.",
+      "item": [
+        {
+          "name": "Create Employee",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/employees/create",
+            "description": "Creates an employee and saves the returned ID to employeeId. Requires ADMIN or HR_MANAGER role.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{userId}}\",\n  \"employee_number\": \"{{employeeNumber}}\",\n  \"first_name\": \"{{employeeFirstName}}\",\n  \"last_name\": \"{{employeeLastName}}\",\n  \"email\": \"{{employeeEmail}}\",\n  \"department_id\": \"{{departmentId}}\",\n  \"manager_employee_id\": \"{{managerEmployeeId}}\",\n  \"hire_date\": \"{{hireDate}}\",\n  \"status\": \"{{employeeStatus}}\",\n  \"version\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && response.data.id) {",
+                  "        pm.collectionVariables.set(\"employeeId\", response.data.id);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find Employee By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/employees/findById?id={{employeeId}}",
+            "description": "Returns one employee by ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Find All Employees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/employees/findAll",
+            "description": "Returns all employee records."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/employees/update/{{employeeId}}",
+            "description": "Updates the selected employee. Requires ADMIN or HR_MANAGER role.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{userId}}\",\n  \"employee_number\": \"{{employeeNumber}}\",\n  \"first_name\": \"{{employeeFirstName}}\",\n  \"last_name\": \"{{employeeLastName}}\",\n  \"email\": \"{{employeeEmail}}\",\n  \"department_id\": \"{{departmentId}}\",\n  \"manager_employee_id\": \"{{managerEmployeeId}}\",\n  \"hire_date\": \"{{hireDate}}\",\n  \"status\": \"{{employeeStatus}}\",\n  \"version\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Employee Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/employees/update-status/{{employeeId}}",
+            "description": "Updates the selected employee status. Body is a JSON enum string such as \"ACTIVE\". Requires ADMIN or HR_MANAGER role.",
+            "body": {
+              "mode": "raw",
+              "raw": "\"{{employeeStatus}}\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Employee Department",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/employees/update-department/{{employeeId}}",
+            "description": "Moves the selected employee to another department. Body is a JSON UUID string. Requires ADMIN or HR_MANAGER role.",
+            "body": {
+              "mode": "raw",
+              "raw": "\"{{departmentId}}\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Attendance",
       "description": "Check-in, check-out, attendance history, and monthly summary requests.",
       "item": [
@@ -47,6 +285,8 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{baseUrl}}/api/attendance/check-in",
+            "description": "Creates today's attendance record. Expected response: 201 Created.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"checkInAt\": \"{{checkInAt}}\"\n}",
@@ -55,9 +295,7 @@
                   "language": "json"
                 }
               }
-            },
-            "url": "{{baseUrl}}/api/attendance/check-in",
-            "description": "Creates today's attendance record. Expected response: 201 Created."
+            }
           },
           "response": []
         },
@@ -71,6 +309,8 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{baseUrl}}/api/attendance/check-out",
+            "description": "Checks out an employee who has already checked in on the same date.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"employeeId\": \"{{employeeId}}\",\n  \"checkOutAt\": \"{{checkOutAt}}\"\n}",
@@ -79,9 +319,7 @@
                   "language": "json"
                 }
               }
-            },
-            "url": "{{baseUrl}}/api/attendance/check-out",
-            "description": "Checks out an employee who has already checked in on the same date."
+            }
           },
           "response": []
         },
@@ -218,8 +456,63 @@
       "type": "string"
     },
     {
-      "key": "notificationId",
+      "key": "managerId",
       "value": "33333333-3333-3333-3333-333333333333",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "44444444-4444-4444-4444-444444444444",
+      "type": "string"
+    },
+    {
+      "key": "managerEmployeeId",
+      "value": "55555555-5555-5555-5555-555555555555",
+      "type": "string"
+    },
+    {
+      "key": "departmentName",
+      "value": "Engineering",
+      "type": "string"
+    },
+    {
+      "key": "departmentDescription",
+      "value": "Engineering department",
+      "type": "string"
+    },
+    {
+      "key": "employeeNumber",
+      "value": "EMP-001",
+      "type": "string"
+    },
+    {
+      "key": "employeeFirstName",
+      "value": "Jane",
+      "type": "string"
+    },
+    {
+      "key": "employeeLastName",
+      "value": "Doe",
+      "type": "string"
+    },
+    {
+      "key": "employeeEmail",
+      "value": "jane.doe@example.com",
+      "type": "string"
+    },
+    {
+      "key": "hireDate",
+      "value": "2026-06-01T09:00:00Z",
+      "type": "string"
+    },
+    {
+      "key": "employeeStatus",
+      "value": "ACTIVE",
+      "type": "string"
+    },
+    {
+      "key": "notificationId",
+      "value": "66666666-6666-6666-6666-666666666666",
       "type": "string"
     },
     {
