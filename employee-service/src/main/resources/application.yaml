@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8083
 
 spring:
   application:
@@ -7,7 +7,7 @@ spring:
 
   cloud:
     config:
-      enabled : false
+      enabled: false
 
   datasource:
     url: jdbc:postgresql://localhost:5435/employee_db
@@ -17,17 +17,21 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-      open-in-view: false
+    open-in-view: false
 
   flyway:
     enabled: true
 
-  logging:
-    level:
-      org.flywaydb : DEBUG
-
   kafka:
     bootstrap-servers: localhost:9092
+
+employee:
+  kafka:
+    topic: employee-events
+
+logging:
+  level:
+    org.flywaydb: DEBUG
 
 eureka:
   client:

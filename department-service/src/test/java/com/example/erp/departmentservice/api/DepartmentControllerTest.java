@@ -1,5 +1,4 @@
 package com.example.erp.departmentservice.api;
-
 import com.example.erp.departmentservice.controller.DepartmentController;
 import com.example.erp.departmentservice.dto.*;
 import com.example.erp.departmentservice.exceptions.DepartmentFindByIdNullCustomException;
@@ -12,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -37,9 +35,10 @@ class DepartmentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    void shouldCreateDepartment() throws Exception {
 
+    @Test
+    @WithMockUser(roles = {"ADMIN","HR_MANAGER"})
+    void shouldCreateDepartment() throws Exception {
         CreateDepartmentRequestDto request =
                 new CreateDepartmentRequestDto("IT", "Information Technology");
 
@@ -55,7 +54,8 @@ class DepartmentControllerTest {
         when(departmentRecordService.create(any(CreateDepartmentRequestDto.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/api/department/create")
+        mockMvc.perform(post("/api/departments/create")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -86,7 +86,7 @@ class DepartmentControllerTest {
                 .thenReturn(responseDto);
 
         mockMvc.perform(
-                        patch("/api/department/{id}/manager", departmentId)
+                        patch("/api/departments/{id}/manager", departmentId)
                                 .param("managerId", managerId.toString())
                                 .with(csrf())
                 )
@@ -97,6 +97,7 @@ class DepartmentControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN","HR_MANAGER"})
     void shouldUpdateDepartment() throws Exception {
         UUID id = UUID.randomUUID();
         OffsetDateTime createdAt = OffsetDateTime.now().minusDays(1);
@@ -117,7 +118,8 @@ class DepartmentControllerTest {
         when(departmentRecordService.update(any(UpdateDepartmentRequestDto.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(put("/api/department/{id}", id)
+        mockMvc.perform(put("/api/departments/update/{id}", id)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -129,20 +131,22 @@ class DepartmentControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN", "HR_MANAGER"})
     void shouldReturnNotFoundWhenDepartmentDoesNotExist() throws Exception {
         UUID id = UUID.randomUUID();
 
         when(departmentRecordService.findById(id))
                 .thenThrow(new DepartmentFindByIdNullCustomException(id));
 
-        mockMvc.perform(get("/api/department/find/{id}", id)
+        mockMvc.perform(get("/api/departments/find/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                        .andExpect(status().isNotFound());
 
         verify(departmentRecordService).findById(id);
     }
 
     @Test
+    @WithMockUser(roles = {"ADMIN", "HR_MANAGER"})
     void shouldFindAllDepartments() throws Exception {
         FindDepartmentResponseDto dept1 = new FindDepartmentResponseDto(
                 UUID.randomUUID(), "IT", "Information Technology");
@@ -153,7 +157,7 @@ class DepartmentControllerTest {
 
         when(departmentRecordService.findAll()).thenReturn(allDepartments);
 
-        mockMvc.perform(get("/api/department/findall")
+        mockMvc.perform(get("/api/departments/findall")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").isArray())

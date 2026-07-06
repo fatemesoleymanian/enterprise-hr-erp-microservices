@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
+
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class EmployeeControllerTest
         when(employeeService.create(any(CreateEmployeeRequestDto.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/api/employee/create")
+        mockMvc.perform(post("/api/employees/create")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -112,7 +112,7 @@ public class EmployeeControllerTest
 
         when(employeeService.findById(id)).thenReturn(responseDto);
 
-        mockMvc.perform(get("/api/employee/findById")
+        mockMvc.perform(get("/api/employees/findById")
                         .param("id", id.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -155,7 +155,7 @@ public class EmployeeControllerTest
 
         when(employeeService.findAll()).thenReturn(list);
 
-        mockMvc.perform(get("/api/employee/findAll")
+        mockMvc.perform(get("/api/employees/findAll")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Success"))
@@ -190,7 +190,7 @@ public class EmployeeControllerTest
         when(employeeService.update(eq(employeeId), any(UpdateEmployeeRequestDto.class)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(put("/api/employee/update{id}", employeeId)
+        mockMvc.perform(put("/api/employees/update/{id}", employeeId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto)))
@@ -213,7 +213,7 @@ public class EmployeeControllerTest
         when(employeeService.update(eq(id), any(UpdateEmployeeRequestDto.class)))
                 .thenThrow(new EmployeeNotFoundCustomException(id));
 
-        mockMvc.perform(put("/api/employee/update" + id)
+        mockMvc.perform(put("/api/employees/update" + id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDto)))
@@ -236,10 +236,10 @@ public class EmployeeControllerTest
         when(employeeService.updateStatus(eq(employeeId), eq(newStatus)))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(patch("/api/employee/update-status" + employeeId) // دقت به فرمت URL شما
+        mockMvc.perform(patch("/api/employees/update-status/{id}", employeeId)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newStatus))) // ارسال "ACTIVE" در Body
+                        .content(objectMapper.writeValueAsString(newStatus)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").value(employeeId.toString()))
                 .andExpect(jsonPath("$.data.status").value("ACTIVE"));
@@ -251,8 +251,7 @@ public class EmployeeControllerTest
         UUID employeeId = UUID.randomUUID();
         Status newStatus = Status.ACTIVE;
 
-        mockMvc.perform(patch("/api/employee/update-status" + employeeId)
-                        .with(csrf())
+        mockMvc.perform(patch("/api/employees/update-status/{id}", employeeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newStatus)))
                 .andExpect(status().isForbidden());
@@ -277,7 +276,7 @@ public class EmployeeControllerTest
                 .thenReturn(responseDto);
 
         mockMvc.perform(
-                        patch("/api/employee/update-department/" + employeeId)
+                        patch("/api/employees/update-department/" + employeeId)
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(departmentId))

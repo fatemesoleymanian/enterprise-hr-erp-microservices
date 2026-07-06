@@ -160,7 +160,6 @@ class EmployeeServiceTest {
 
     @Test
     void findById_whenEmployeeDoesNotExist_shouldThrowEmployeeNotFoundCustomException() {
-        // Arrange
         UUID employeeId = UUID.randomUUID();
 
         when(employeeRepository.findById(employeeId))
@@ -331,7 +330,6 @@ class EmployeeServiceTest {
 
     @Test
     void updateStatus_whenEmployeeExists_shouldUpdateStatusAndReturnResponse() {
-        // Arrange
         UUID id = UUID.randomUUID();
         Status newStatus = Status.ACTIVE;
 

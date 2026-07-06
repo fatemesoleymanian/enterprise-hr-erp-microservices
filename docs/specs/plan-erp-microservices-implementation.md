@@ -1793,7 +1793,7 @@ git commit -m "ci: build and test all services"
 
 ### Task 8.3: Add Architecture Diagrams
 
-- [ ] Create `docs/diagrams/system-context.md`:
+- [x] Create `docs/diagrams/system-context.md`:
 
 ````markdown
 # System Context
@@ -1848,7 +1848,7 @@ git commit -m "docs(architecture): add system diagrams"
 
 ### Task 8.4: Add Interview Evidence
 
-- [ ] Create `docs/interview/project-walkthrough.md`:
+- [x] Create `docs/interview/project-walkthrough.md`:
 
 ```markdown
 # Project Walkthrough
