@@ -9,9 +9,9 @@ CREATE TABLE employees (
                            department_id UUID,
                            manager_employee_id UUID,
                            status VARCHAR(20) NOT NULL,
-                           hire_date DATE NOT NULL,
-                           created_at TIMESTAMP NOT NULL,
-                           updated_at TIMESTAMP NOT NULL,
+                           hire_date TIMESTAMP WITH TIME ZONE NOT NULL,
+                           created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+                           updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
                            version INTEGER NOT NULL DEFAULT 0,
 
                            CONSTRAINT fk_manager

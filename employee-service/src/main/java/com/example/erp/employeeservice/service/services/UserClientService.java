@@ -1,10 +1,11 @@
 package com.example.erp.employeeservice.service.services;
 
 import com.example.erp.employeeservice.service.contracts.IUserClientService;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.UUID;
 
-
+@Service
 public class UserClientService implements IUserClientService {
     private final WebClient webClient;
 

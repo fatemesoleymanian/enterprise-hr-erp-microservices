@@ -34,9 +34,9 @@ public class Employee
     private OffsetDateTime updated_at;
     @Column(name = "version", nullable = false)
     private Integer version;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
-
     public Employee(UUID id, UUID user_id, String first_name,
                     String employee_number, String last_name,
                     String email, UUID department_id,
