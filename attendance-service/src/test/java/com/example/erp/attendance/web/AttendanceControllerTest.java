@@ -9,6 +9,7 @@ import com.example.erp.attendance.web.dto.CheckOutRequest;
 import com.example.erp.attendance.web.dto.MonthlyAttendanceSummaryResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -22,8 +23,10 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -65,6 +68,45 @@ class AttendanceControllerTest {
                 .andExpect(jsonPath("$.message").value("Success"))
                 .andExpect(jsonPath("$.data.employeeId").value(employeeId.toString()))
                 .andExpect(jsonPath("$.data.statuses[0]").value("PRESENT"));
+    }
+
+    @Test
+    void checkInPreservesRequestOffsetForAttendancePolicyEvaluation() throws Exception {
+        UUID employeeId = UUID.randomUUID();
+        OffsetDateTime checkInAt = OffsetDateTime.of(
+                2026,
+                6,
+                1,
+                9,
+                30,
+                0,
+                0,
+                ZoneOffset.ofHoursMinutes(4, 30)
+        );
+        AttendanceRecordResponse response = new AttendanceRecordResponse(
+                UUID.randomUUID(),
+                employeeId,
+                LocalDate.of(2026, 6, 1),
+                checkInAt,
+                null,
+                List.of(AttendanceStatus.LATE),
+                0
+        );
+        when(attendanceService.checkIn(any(CheckInRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/attendance/check-in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "employeeId": "%s",
+                                  "checkInAt": "2026-06-01T09:30:00+04:30"
+                                }
+                                """.formatted(employeeId)))
+                .andExpect(status().isCreated());
+
+        ArgumentCaptor<CheckInRequest> requestCaptor = ArgumentCaptor.forClass(CheckInRequest.class);
+        verify(attendanceService).checkIn(requestCaptor.capture());
+        assertThat(requestCaptor.getValue().checkInAt()).isEqualTo(checkInAt);
     }
 
     @Test

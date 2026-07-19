@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: attendance-service
+  jackson:
+    deserialization:
+      adjust-dates-to-context-time-zone: false
   datasource:
     url: jdbc:postgresql://localhost:5436/attendance_db
     username: attendance_user
